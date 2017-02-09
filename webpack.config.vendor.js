@@ -6,7 +6,7 @@ const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = (env) => {
-    
+
     const extractCSS = new ExtractTextPlugin('vendor.css');
     const isDevBuild = !(env && env.prod);
 
@@ -19,13 +19,12 @@ module.exports = (env) => {
             extensions: ['.js']
         },
         module: {
-            loaders: [
-                {
+            loaders: [{
                     test: /\.css/,
-                    loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader' })
+                    use: ExtractTextPlugin.extract({ fallback: 'style-loader', use: ['css-loader'] })
                 },
                 { test: /\.(png|woff|woff2|eot|ttf|svg)(\?|$)/, use: 'url-loader?limit=100000' }
-            
+
             ]
         },
         entry: {
@@ -38,7 +37,7 @@ module.exports = (env) => {
                 '@angular/platform-browser-dynamic',
                 '@angular/router',
                 '@angular/platform-server',
-                'angular2-universal',           
+                'angular2-universal',
                 'angular2-universal-polyfills',
                 'core-js',
                 'es6-promise',
@@ -58,29 +57,29 @@ module.exports = (env) => {
             publicPath: '/dist/'
         },
         plugins: [
-            // Uncomment if you want to use jQuery
-            // new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }), // Maps these identifiers to the jQuery package (because Bootstrap expects it to be a global variable)
-            
-            new webpack.ContextReplacementPlugin(/\@angular\b.*\b(bundles|linker)/, path.join(__dirname, './Client')), // Workaround for https://github.com/angular/angular/issues/11580
-            // extractCSS,
-            //new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }), // Maps these identifiers to the jQuery package (because Bootstrap expects it to be a global variable)
-            // new webpack.DllPlugin({
-            //     path: path.join(__dirname, 'wwwroot', 'dist', '[name]-manifest.json'),
-            //     name: '[name]_[hash]'
-            // }),
-            new webpack.IgnorePlugin(/^vertx$/) // Workaround for https://github.com/stefanpenner/es6-promise/issues/100
+                // Uncomment if you want to use jQuery
+                // new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }), // Maps these identifiers to the jQuery package (because Bootstrap expects it to be a global variable)
 
-        ]
-        // .concat(isDevBuild ? [] : [
-        //     new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
-        // ])
+                new webpack.ContextReplacementPlugin(/\@angular\b.*\b(bundles|linker)/, path.join(__dirname, './Client')), // Workaround for https://github.com/angular/angular/issues/11580
+                // extractCSS,
+                //new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }), // Maps these identifiers to the jQuery package (because Bootstrap expects it to be a global variable)
+                // new webpack.DllPlugin({
+                //     path: path.join(__dirname, 'wwwroot', 'dist', '[name]-manifest.json'),
+                //     name: '[name]_[hash]'
+                // }),
+                new webpack.IgnorePlugin(/^vertx$/) // Workaround for https://github.com/stefanpenner/es6-promise/issues/100
+
+            ]
+            // .concat(isDevBuild ? [] : [
+            //     new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
+            // ])
     };
 
     const clientConfig = merge(sharedConfig, {
         output: { path: path.join(__dirname, 'wwwroot', 'dist') },
         module: {
             rules: [
-                { test: /\.css(\?|$)/, use: extractCSS.extract({ loader: 'css-loader' }) }
+                { test: /\.css(\?|$)/, use: extractCSS.extract({ use: ['css-loader'] }) }
             ]
         },
         plugins: [
@@ -102,7 +101,7 @@ module.exports = (env) => {
             libraryTarget: 'commonjs2',
         },
         module: {
-            rules: [ { test: /\.css(\?|$)/, use: ['to-string-loader', 'css-loader'] } ]
+            rules: [{ test: /\.css(\?|$)/, use: ['to-string-loader', 'css-loader'] }]
         },
         entry: { vendor: ['aspnet-prerendering'] },
         plugins: [
@@ -114,7 +113,7 @@ module.exports = (env) => {
     });
 
     return [
-        clientConfig, 
+        clientConfig,
         serverConfig
     ];
 
